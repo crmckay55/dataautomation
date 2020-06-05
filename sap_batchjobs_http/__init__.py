@@ -24,14 +24,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     # TODO: standardize the body passed.  This will be done in data factory
-    name = req.params.get('file_name')
+    name = req.params.get('filename')
     if not name:
         try:
             req_body = req.get_json()
         except ValueError:
             pass
         else:
-            name = req_body.get('file_name')
+            name = req_body.get('filename')
 
     if name:
         return func.HttpResponse(start_processing.process_data(name))
