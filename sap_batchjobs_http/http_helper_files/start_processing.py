@@ -11,12 +11,12 @@
 import os, importlib, logging, tempfile
 
 try:
-    from . import manager_blobs
-    from . import manager_tables
+    from .manager_blobs import BlobHandler
+    from .manager_tables import TableHandler
     from .. import azure_config
 except ModuleNotFoundError:
-    from sap_batchjobs_http.http_helper_files import manager_blobs
-    from sap_batchjobs_http.http_helper_files import manager_tables
+    from sap_batchjobs_http.http_helper_files.manager_blobs import BlobHandler
+    from sap_batchjobs_http.http_helper_files.manager_tables import TableHandler
     from sap_batchjobs_http import azure_config
 
 
@@ -26,15 +26,15 @@ def process_data(filename: str):
     file_parameters = _parse_filename(filename)
     in_process_blob = _create_in_process_filename(file_parameters) + '.csv'
 
-    source_blob = manager_blobs.BlobHandler(config.PS_CONNECTION,
+    source_blob = BlobHandler(config.PS_CONNECTION,
                                             config.PS_RAW,
                                             filename)
 
-    destination_blob = manager_blobs.BlobHandler(config.PS_CONNECTION,
+    destination_blob = BlobHandler(config.PS_CONNECTION,
                                                  config.PS_INPROCESS,
                                                  in_process_blob)
 
-    log_table = manager_tables.TableHandler(config.SS_CONNECTION,
+    log_table = TableHandler(config.SS_CONNECTION,
                                             config.SS_LOGSTABLE)
 
 
