@@ -20,14 +20,14 @@ except ModuleNotFoundError:  # if local
     from sap_batchjob_processor.http_helper_functions import start_processing
 
 
-def main(request_body: func.HttpRequest) -> func.HttpResponse:
+def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     # TODO: standardize the body passed.  This will be done in data factory
-    name = request_body.params.get('file_name')
+    name = req.params.get('file_name')
     if not name:
         try:
-            req_body = request_body.get_json()
+            req_body = req.get_json()
         except ValueError:
             pass
         else:
