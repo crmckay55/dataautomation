@@ -1,0 +1,9 @@
+azure-functions
+beautifulsoup4
+pandas
+azure-storage-blob
+azure-cosmosdb-table
+azure-cosmos
+azure-mgmt-resource
+azure-mgmt-datalake-store
+azure-datalake-store
