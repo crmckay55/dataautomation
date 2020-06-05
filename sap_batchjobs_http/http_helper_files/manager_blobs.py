@@ -9,6 +9,7 @@ import logging
 import tempfile
 from azure.storage.blob import BlobServiceClient
 
+
 class BlobHandler:
 
     def __init__(self, connection_string, container, path):

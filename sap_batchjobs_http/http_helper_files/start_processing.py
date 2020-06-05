@@ -15,9 +15,9 @@ try:
     from . import manager_tables
     from .. import azure_config
 except ModuleNotFoundError:
-    from sap_batchjob_processor.http_helper_functions import manager_blobs
-    from sap_batchjob_processor.http_helper_functions import manager_tables
-    from sap_batchjob_processor import azure_config
+    from sap_batchjobs_http.http_helper_files import manager_blobs
+    from sap_batchjobs_http.http_helper_files import manager_tables
+    from sap_batchjobs_http import azure_config
 
 
 def process_data(filename: str):
@@ -36,7 +36,6 @@ def process_data(filename: str):
 
     log_table = manager_tables.TableHandler(config.SS_CONNECTION,
                                             config.SS_LOGSTABLE)
-
 
 
     source_contents = source_blob.get_blob(filename)

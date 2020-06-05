@@ -10,6 +10,7 @@ import logging
 from azure.cosmosdb.table.tableservice import TableService, TableBatch
 from azure.cosmosdb.table.models import EntityProperty, EdmType
 
+
 class TableHandler:
 
     def __init__(self, connection_string, table):
