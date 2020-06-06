@@ -8,7 +8,7 @@
 import os
 import logging
 import tempfile
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobClient
 
 
 class BlobHandler:
@@ -17,18 +17,17 @@ class BlobHandler:
         self.connection_string = connection_string
         self.container = container
         self.path = path
+        self.blob_client = BlobClient.from_connection_string(conn_str=self.connection_string,
+                                                             container_name=self.container,
+                                                             blob_name=self.path)
 
     def get_blob(self, filename):
 
         temp_file_path = tempfile.gettempdir()
         temp_file = os.path.join(temp_file_path, "file.htm")
 
-        blob_services_client = BlobServiceClient.from_connection_string(conn_str=self.connection_string)
-        blob_container_client = blob_services_client.get_container_client(self.container)
-        blob_client = blob_container_client.get_blob_client(self.path + filename)
-
         with open(temp_file, 'wb') as f:
-            f.write(blob_client.download_blob().readall())
+            f.write(self.blob_client.download_blob().readall())
 
         with open(temp_file, "r") as f:
             contents = f.read()
@@ -37,10 +36,10 @@ class BlobHandler:
 
         return contents
 
-    def write_blob(self, filename):
-        # write blob to container and folder defined in the class
+    def write_blob(self, contents):
+
+        self.blob_client.upload_blob(contents)
         # return status
-        pass
 
     def delete_bob(self, filename):
         # delete blob in container and folder defined in the class

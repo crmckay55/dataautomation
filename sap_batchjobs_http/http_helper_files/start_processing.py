@@ -25,9 +25,7 @@ def process_data(filename: str):
 
     config = azure_config.DefaultConfig()
     file_parameters = _parse_filename(filename)
-    in_process_blob = _create_in_process_filename(file_parameters) + '.csv'
-
-    logging.info(f'{filename},  {file_parameters},  {in_process_blob}')
+    destination_blob_name = _create_in_process_filename(file_parameters) + '.csv'
 
     source_blob = BlobHandler(config.PS_CONNECTION,
                               config.PS_RAW,
@@ -35,11 +33,10 @@ def process_data(filename: str):
 
     destination_blob = BlobHandler(config.PS_CONNECTION,
                                    config.PS_INPROCESS,
-                                   in_process_blob)
+                                   destination_blob_name)
 
     log_table = TableHandler(config.SS_CONNECTION,
-                                            config.SS_LOGSTABLE)
-
+                             config.SS_LOGSTABLE)
 
     source_contents = source_blob.get_blob(filename)
 
@@ -50,13 +47,13 @@ def process_data(filename: str):
 
     # TODO: write data to destination blob.
     # TODO: add a paramater to specify how to write: json, CSV, delimiters etc.
-    destination_blob.write_blob('')  # TODO: add dynamic filename.
+    destination_blob.write_blob(source_contents)  # TODO: add contents.
 
     # TODO: write status to log table
     # TODO: need to catch exceptions, and still write to log table.
 
     # TODO return the temporary filename so it can be returned to the calling data factory for further processing.
-    return in_process_blob
+    return destination_blob_name
 
 
 def _parse_filename(filename: str):
