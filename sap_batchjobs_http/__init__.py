@@ -21,7 +21,7 @@ except ModuleNotFoundError:  # if local
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    
 
     # TODO: standardize the body passed.  This will be done in data factory
     name = req.params.get('filename')
@@ -34,6 +34,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('filename')
 
     if name:
+        logging.info(f'Python HTTP trigger function processed a request with {name}.')
         return func.HttpResponse(start_processing.process_data(name))
     else:
         return func.HttpResponse(f'Error-{name} does not exist',
