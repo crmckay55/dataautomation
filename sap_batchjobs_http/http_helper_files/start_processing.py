@@ -77,13 +77,13 @@ def _parse_filename(filename: str):
     transaction = step2.split('-')[1].split('_')[0]
     version = step2.split('-')[1].split('_')[1]
 
-    datetime = pytz.utc.localize(datetime.datetime.utcnow())
-    snapdate = datetime.astimezone(pytz.timezone("America/Edmonton")).strftime("%Y%m%d")
+    dt_now = pytz.utc.localize(datetime.datetime.utcnow())
+    snap_date = dt_now.astimezone(pytz.timezone("America/Edmonton")).strftime("%Y%m%d")
 
     parameters = {'event': event,
                   'transaction': transaction,
                   'version': version,
-                  'date': snapdate}
+                  'date': snap_date}
 
     return parameters
 
