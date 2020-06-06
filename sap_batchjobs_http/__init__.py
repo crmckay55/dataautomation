@@ -10,6 +10,7 @@
 # ---------------------------------------------------------------
 
 import logging
+import json
 import azure.functions as func
 
 try:     # if azure
@@ -36,7 +37,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if name:
         logging.info(f'Python HTTP trigger function processed a request with {name}.')
         status = start_processing.process_data(name)
-        return func.HttpResponse(status, status_code=200)
+        response = '{\"inprogress_blob_name\":\"' + {status} + '\"}'
+        return func.HttpResponse(response, status_code=200)
     else:
         return func.HttpResponse(f'Error-{name} does not exist',
                                  status_code=200)
