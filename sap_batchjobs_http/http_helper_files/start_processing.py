@@ -35,6 +35,7 @@ def process_data(filename: str):
                                    config.PS_INPROCESS,
                                    destination_blob_name)
 
+    # TODO: Write to log table with results.
     log_table = TableHandler(config.SS_CONNECTION,
                              config.SS_LOGSTABLE)
 
@@ -42,13 +43,10 @@ def process_data(filename: str):
 
     try:
         tx = file_parameters['transaction']
-        print(tx)
         transaction_processor = importlib.import_module(f'sap_batchjobs_http.http_helper_files.tx_{tx}', package=None)
-        print(f'Found module for {tx} without __app__')
         logging.info(f'Found module for {tx} without __app__')
     except:
         transaction_processor = importlib.import_module(f'__app__.http_helper_files.tx_{tx}', package=None)
-        print(f'Found module for {tx} with __app__')
         logging.info(f'Found module for {tx} with __app__')
 
     parsed_df = transaction_processor.parse_batch_file(source_contents, file_parameters['function'])
@@ -57,8 +55,8 @@ def process_data(filename: str):
 
     # TODO: write status to log table
     # TODO: need to catch exceptions, and still write to log table.
+    # TODO: delete raw blob
 
-    # TODO return the temporary filename so it can be returned to the calling data factory for further processing.
     return destination_blob_name
 
 

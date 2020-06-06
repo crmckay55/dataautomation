@@ -40,8 +40,6 @@ def _iw38_01(contents) -> pd.DataFrame:
     # strip out list elements
     stripped_lists = soup('table', {"class": "list"})
 
-
-
     # iterate through lists to get bodies
     for idx_lst, lst in enumerate(stripped_lists):
         stripped_bodies = lst('tbody')
@@ -70,11 +68,10 @@ def _iw38_01(contents) -> pd.DataFrame:
 
 
 def _iw38_01_get_row(column_data, headers) -> pd.DataFrame:
-    """
-
-    :param column_data:
-    :param headers:
-    :return:
+    """get the data for the current row
+    :param column_data: list of entities with data
+    :param headers: list of headers
+    :return: dataframe for the current row
     """
     df = pd.DataFrame(columns=headers)
     current_row = {}
@@ -94,8 +91,7 @@ def _iw38_01_get_row(column_data, headers) -> pd.DataFrame:
 
 
 def _iw38_01_get_headers(columns) -> list:
-    """
-
+    """parse the headers of the table
     :param columns:
     :return:
     """
