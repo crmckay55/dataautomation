@@ -34,7 +34,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('filename')
 
     if name:
-        return func.HttpResponse(func.HttpResponse(start_processing.process_data(name)))
+        return func.HttpResponse(start_processing.process_data(name))
     else:
         return func.HttpResponse(f'Error-{name} does not exist',
                                  status_code=200)
