@@ -27,13 +27,15 @@ def process_data(filename: str):
     file_parameters = _parse_filename(filename)
     in_process_blob = _create_in_process_filename(file_parameters) + '.csv'
 
+    logging.info(f'{filename},  {file_parameters},  {in_process_blob}')
+
     source_blob = BlobHandler(config.PS_CONNECTION,
-                                            config.PS_RAW,
-                                            filename)
+                              config.PS_RAW,
+                              filename)
 
     destination_blob = BlobHandler(config.PS_CONNECTION,
-                                                 config.PS_INPROCESS,
-                                                 in_process_blob)
+                                   config.PS_INPROCESS,
+                                   in_process_blob)
 
     log_table = TableHandler(config.SS_CONNECTION,
                                             config.SS_LOGSTABLE)
@@ -70,6 +72,7 @@ def _parse_filename(filename: str):
     # step 3:  xxxxxxxx   split[0]   -split[1]xxxxxxxxxxxx<- separate elements
     # step 4:  xxxxxxxx           split[0]_split[1]       <- isolate transaction
     #
+    # TODO: create invalid filename routine to check for proper formatting
 
     step1 = filename.strip('Job SAP-')  # Step 1: remove prefix
     step2 = step1.split(',')[0]         # Step 2: remove suffix
