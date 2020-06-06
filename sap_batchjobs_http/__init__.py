@@ -37,7 +37,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     if name:
         logging.info(f'Python HTTP trigger function processed a request with {name}.')
         status = start_processing.process_data(name)
-        response = '{\"inprogress_blob_name\":\"' + {status} + '\"}'
+        response = f'inprogress_blob_name: {status}'
         return func.HttpResponse(response, status_code=200)
     else:
         return func.HttpResponse(f'Error-{name} does not exist',
