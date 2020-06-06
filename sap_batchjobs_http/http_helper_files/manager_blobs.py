@@ -36,10 +36,14 @@ class BlobHandler:
 
         return contents
 
-    def write_blob(self, contents):
+    def write_blob(self, df, file_type):
 
-        self.blob_client.upload_blob(contents)
-        # return status
+        if file_type == "csv":
+            output = df.to_csv(index=False, sep='\t')
+            self.blob_client.upload_blob(output)
+        else:
+            pass
+        # TODO: return something
 
     def delete_bob(self, filename):
         # delete blob in container and folder defined in the class

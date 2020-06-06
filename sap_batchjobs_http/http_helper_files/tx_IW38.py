@@ -14,10 +14,15 @@ from bs4 import BeautifulSoup
 import pandas as pd
 
 
-def parse_batch_file(contents, version: str):
+def parse_batch_file(contents, function: str):
+    """
 
+    :param contents: blob data
+    :param function: what version of the function to call
+    :return: dataframe
+    """
     # TODO: dynamically call method based on version
-    func = getattr(sys.modules[__name__], "_" + version.lower())
+    func = getattr(sys.modules[__name__], '_' + function.lower())
     df = func(contents)
 
     return df
@@ -35,7 +40,7 @@ def _iw38_01(contents) -> pd.DataFrame:
     # strip out list elements
     stripped_lists = soup('table', {"class": "list"})
 
-    df = pd.DataFrame
+
 
     # iterate through lists to get bodies
     for idx_lst, lst in enumerate(stripped_lists):
@@ -49,6 +54,7 @@ def _iw38_01(contents) -> pd.DataFrame:
                 hdr_row = body('tr')
                 columns = hdr_row[0]('td')
                 keys = _iw38_01_get_headers(columns)
+                df = pd.DataFrame(columns=keys)
 
             # if not first list, skip body 0 which is the header again
             elif idx_body > 0:
@@ -58,8 +64,7 @@ def _iw38_01(contents) -> pd.DataFrame:
                 for idx_row, row in enumerate(stripped_rows):
                     columns = row('td')
 
-                    df2 = _iw38_01_get_row(columns, keys)
-                    df = df.append(df2, ignore_index=True)
+                    df = df.append(_iw38_01_get_row(columns, keys), ignore_index=True)
 
     return df
 

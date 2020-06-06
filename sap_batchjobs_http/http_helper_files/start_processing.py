@@ -40,14 +40,20 @@ def process_data(filename: str):
 
     source_contents = source_blob.get_blob(filename)
 
-    # TODO: figure out correct transaction to call.
-    # TODO: import said module dynamically, allowing for local vs. azure imports
-    # TODO: call transaction module dynamically with contents and version (e.g. IW38_01)
-    # TODO: create in process filename
+    try:
+        tx = file_parameters['transaction']
+        print(tx)
+        transaction_processor = importlib.import_module(f'sap_batchjobs_http.http_helper_files.tx_{tx}', package=None)
+        print(f'Found module for {tx} without __app__')
+        logging.info(f'Found module for {tx} without __app__')
+    except:
+        transaction_processor = importlib.import_module(f'__app__.http_helper_files.tx_{tx}', package=None)
+        print(f'Found module for {tx} with __app__')
+        logging.info(f'Found module for {tx} with __app__')
 
-    # TODO: write data to destination blob.
-    # TODO: add a paramater to specify how to write: json, CSV, delimiters etc.
-    destination_blob.write_blob(source_contents)  # TODO: add contents.
+    parsed_df = transaction_processor.parse_batch_file(source_contents, file_parameters['function'])
+
+    destination_blob.write_blob(parsed_df, 'csv')
 
     # TODO: write status to log table
     # TODO: need to catch exceptions, and still write to log table.
@@ -83,7 +89,8 @@ def _parse_filename(filename: str):
     parameters = {'event': event,
                   'transaction': transaction,
                   'version': version,
-                  'date': snap_date}
+                  'date': snap_date,
+                  'function': transaction + '_' + version}
 
     return parameters
 
