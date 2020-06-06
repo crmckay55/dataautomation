@@ -5,6 +5,7 @@
 # Manages all blob read, writes, and deletes.
 # Changes:
 # ---------------------------------------------------------------
+import os
 import logging
 import tempfile
 from azure.storage.blob import BlobServiceClient
@@ -15,13 +16,25 @@ class BlobHandler:
     def __init__(self, connection_string, container, path):
         self.connection_string = connection_string
         self.container = container
-        self.folder = folder
+        self.path = path
 
     def get_blob(self, filename):
-        contents = []
-        # open blob and write to local file
-        # read open file to object
-        # return contents
+
+        temp_file_path = tempfile.gettempdir()
+        temp_file = os.path.join(temp_file_path, "file.htm")
+
+        blob_services_client = BlobServiceClient.from_connection_string(conn_str=self.connection_string)
+        blob_container_client = blob_services_client.get_container_client(self.container)
+        blob_client = blob_container_client.get_blob_client(self.path + filename)
+
+        with open(temp_file, 'wb') as f:
+            f.write(blob_client.download_blob().readall())
+
+        with open(temp_file, "r") as f:
+            contents = f.read()
+
+        logging.info(f'Read file {filename} of size {len(contents)}')
+
         return contents
 
     def write_blob(self, filename):

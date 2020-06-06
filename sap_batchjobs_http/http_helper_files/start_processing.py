@@ -9,6 +9,7 @@
 # ---------------------------------------------------------------
 
 import os, importlib, logging, tempfile
+import datetime, pytz
 
 try:
     from .manager_blobs import BlobHandler
@@ -63,21 +64,26 @@ def _parse_filename(filename: str):
     :return: parameters
     """
 
-    #          Job SAP-Carseland 2021-IW38_01-20200523, Step 1.htm <- update this!
-    # step 1:  strip                                               <- get rid of prefix
-    # step 2:  xxxxxxxx               split[0]        ,   split[1] <- get rid of suffix
-    # step 3:  xxxxxxxx   split[0]   -split[1]-  split[2]          <- separate elements
-    # step 4:  xxxxxxxx           split[0]_split[1]                <- isolate transaction
+    #          Job SAP-Carseland 2021-IW38_01, Step 1.htm <- update this!
+    # step 1:  strip                                      <- get rid of prefix
+    # step 2:  xxxxxxxx      split[0]        ,   split[1] <- get rid of suffix
+    # step 3:  xxxxxxxx   split[0]   -split[1]xxxxxxxxxxxx<- separate elements
+    # step 4:  xxxxxxxx           split[0]_split[1]       <- isolate transaction
     #
 
-    name = filename.strip('Job SAP-')  # Step 1: remove prefix
-    name = name.split(',')[0]          # Step 2: remove suffix
-    tx = name.split('_')               # get transaction only
+    step1 = filename.strip('Job SAP-')  # Step 1: remove prefix
+    step2 = step1.split(',')[0]         # Step 2: remove suffix
+    event = step2.split('-')[0]         # get event name
+    transaction = step2.split('-')[1].split('_')[0]
+    version = step2.split('-')[1].split('_')[1]
 
-    parameters = {'event': name[0],
-                  'transaction': tx[0],
-                  'version': tx[1],
-                  'date': name[2]}
+    datetime = pytz.utc.localize(datetime.datetime.utcnow())
+    snapdate = datetime.astimezone(pytz.timezone("America/Edmonton")).strftime("%Y%m%d")
+
+    parameters = {'event': event,
+                  'transaction': transaction,
+                  'version': version,
+                  'date': snapdate}
 
     return parameters
 
