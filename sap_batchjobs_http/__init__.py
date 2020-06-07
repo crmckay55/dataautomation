@@ -38,7 +38,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         logging.info(f'Python HTTP trigger function processed a request with {name}.')
         status = start_processing.process_data(name)
         response = {"inprogress_blob_name": status}
-        return func.HttpResponse(body=response, status_code=200)
+        func.HttpResponse.mimetype = 'applicatoin/json'
+        func.HttpResponse.charset = 'utf-8'
+
+        logging.info(f'Json response will be: {response}')
+        
+        return func.HttpResponse(response)
     else:
         response = {"inprogress_blob_name": "error with" + status}
         return func.HttpResponse(body=response,
