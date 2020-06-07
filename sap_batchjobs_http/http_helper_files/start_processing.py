@@ -57,7 +57,7 @@ def process_data(filename: str):
     # TODO: need to catch exceptions, and still write to log table.
     # TODO: delete raw blob
 
-    return file_parameters['event'], file_parameters['function'], file_parameters['snap_date']
+    return file_parameters['event'], file_parameters['transaction'], file_parameters['function'], file_parameters['snap_date']
 
 
 def _parse_filename(filename: str):

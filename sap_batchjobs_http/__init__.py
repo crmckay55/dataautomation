@@ -36,14 +36,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     if name:
         logging.info(f'Python HTTP trigger function processed a request with {name}.')
-        
+        # event, transaction, function, snap_date = start_processing.process_data(name)
         event = 'CARSELAND 2021'
+        transaction = 'IW38'
         function = 'IW38_01'
         snap_date = '20200606'
         filename = event + '-' + function + '-' + snap_date + '.csv'
 
         response = {"inprogress_blob_name": filename,
                     "event": event,
+                    "transaction": transaction,
                     "function": function,
                     "snapdate": snap_date
                     }
