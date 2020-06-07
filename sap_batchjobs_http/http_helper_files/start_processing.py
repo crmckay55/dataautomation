@@ -45,6 +45,7 @@ def process_data(filename: str):
         tx = file_parameters['transaction']
         transaction_processor = importlib.import_module(f'sap_batchjobs_http.http_helper_files.tx_{tx}', package=None)
         logging.info(f'Found module for {tx} without __app__')
+        
     except:
         transaction_processor = importlib.import_module(f'__app__.http_helper_files.tx_{tx}', package=None)
         logging.info(f'Found module for {tx} with __app__')
