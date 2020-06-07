@@ -35,8 +35,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('filename')
 
     if name:
-       logging.info(f'Python HTTP trigger function processed a request with {name}.')
-        #event, function, snap_date = start_processing.process_data(name)
+        logging.info(f'Python HTTP trigger function processed a request with {name}.')
+        
         event = 'CARSELAND 2021'
         function = 'IW38_01'
         snap_date = '20200606'
@@ -52,8 +52,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         func.HttpResponse.charset = 'utf-8'
 
         logging.info(f'Json response will be: {response}')
-        
+      
         return func.HttpResponse(body=json.dumps(response), status_code=200)
+
     else:
         response = {"inprogress_blob_name": "error with" + status}
         return func.HttpResponse(body=response,
