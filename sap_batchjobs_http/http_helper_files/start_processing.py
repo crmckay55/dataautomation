@@ -53,19 +53,18 @@ def process_data(filename: str):
     parsed_df = transaction_processor.parse_batch_file(source_contents, file_parameters['function'])
 
     destination_blob.write_blob(parsed_df, 'csv')
+    source_blob.delete_bob()
 
     # TODO: write status to log table
     # TODO: need to catch exceptions, and still write to log table.
-    # TODO: delete raw blob
 
-    return file_parameters['event'], file_parameters['transaction'], file_parameters['function'], file_parameters['snap_date']
+    return file_parameters['event'], file_parameters['transaction'], file_parameters['function'], file_parameters['date']
 
 
 def _parse_filename(filename: str):
     """Separate the filename into useable components
-
-    :param filename:
-    :return: parameters
+    :param filename: filename passed by data factory
+    :return: parameters made out of the filename
     """
 
     #          Job SAP-Carseland 2021-IW38_01, Step 1.htm <- update this!
@@ -73,6 +72,8 @@ def _parse_filename(filename: str):
     # step 2:  xxxxxxxx      split[0]        ,   split[1] <- get rid of suffix
     # step 3:  xxxxxxxx   split[0]   -split[1]xxxxxxxxxxxx<- separate elements
     # step 4:  xxxxxxxx           split[0]_split[1]       <- isolate transaction
+    #          Job SAP-Carseland 2021-IW38_01-20200606, Step 1.htm
+    #          xxxxxxx-  split [0]   -split[1]-split[2]xxx<- if it comes with a date
     #
     # TODO: create invalid filename routine to check for proper formatting
 
@@ -82,8 +83,11 @@ def _parse_filename(filename: str):
     transaction = step2.split('-')[1].split('_')[0]
     version = step2.split('-')[1].split('_')[1]
 
-    dt_now = pytz.utc.localize(datetime.datetime.utcnow())
-    snap_date = dt_now.astimezone(pytz.timezone("America/Edmonton")).strftime("%Y%m%d")
+    try:    # if there is index 2, then the manual file has the date
+        snap_date = step2.split('-')[2]
+    except: # otherwise use the current date
+        dt_now = pytz.utc.localize(datetime.datetime.utcnow())
+        snap_date = dt_now.astimezone(pytz.timezone("America/Edmonton")).strftime("%Y%m%d")
 
     parameters = {'event': event,
                   'transaction': transaction,
