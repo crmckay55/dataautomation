@@ -35,10 +35,19 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('filename')
 
     if name:
-        logging.info(f'Python HTTP trigger function processed a request with {name}.')
-        #status = start_processing.process_data(name)
-        debug_name = 'CARSELAND 2021-IW38_01-20200606.csv'
-        response = {"inprogress_blob_name": debug_name}
+       logging.info(f'Python HTTP trigger function processed a request with {name}.')
+        #event, function, snap_date = start_processing.process_data(name)
+        event = 'CARSELAND 2021'
+        function = 'IW38_01'
+        snap_date = '20200606'
+        filename = event + '-' + function + '-' + snap_date + '.csv'
+
+        response = {"inprogress_blob_name": filename,
+                    "event": event,
+                    "function": function,
+                    "snapdate": snap_date
+                    }
+        
         func.HttpResponse.mimetype = 'application/json'
         func.HttpResponse.charset = 'utf-8'
 
