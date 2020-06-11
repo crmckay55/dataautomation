@@ -45,7 +45,5 @@ class BlobHandler:
             pass
         # TODO: return something
 
-    def delete_bob(self, filename):
-        # delete blob in container and folder defined in the class
-        # return status
-        pass
+    def delete_bob(self):
+        self.blob_client.delete_blob(delete_snapshots=False)
