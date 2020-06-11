@@ -13,10 +13,10 @@ from azure.storage.blob import BlobClient
 
 class BlobHandler:
 
-    def __init__(self, connection_string, container, path):
+    def __init__(self, connection_string, container, filename, path):
         self.connection_string = connection_string
         self.container = container
-        self.path = path
+        self.path = path + '/' + filename
         self.blob_client = BlobClient.from_connection_string(conn_str=self.connection_string,
                                                              container_name=self.container,
                                                              blob_name=self.path)

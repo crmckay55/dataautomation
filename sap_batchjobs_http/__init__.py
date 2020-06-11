@@ -26,6 +26,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     # TODO: standardize the body passed.  This will be done in data factory
     name = req.params.get('filename')
+    path = req.params.get('path')
+
     if not name:
         try:
             req_body = req.get_json()
@@ -33,10 +35,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             pass
         else:
             name = req_body.get('filename')
+            path = req_body.get('path')
 
     if name:
-        logging.info(f'Python HTTP trigger function processed a request with {name}.')
-        event, transaction, function, snap_date = start_processing.process_data(name)
+        logging.info(f'Python HTTP trigger function processed a request with {path} and {name}.')
+        event, transaction, function, snap_date = start_processing.process_data(name, path)
         # <TODO> do edits here then push to github
         # accomodate files that already have datestamp, so we can do manualy uploads!!
         filename = event + '-' + function + '-' + snap_date + '.csv'

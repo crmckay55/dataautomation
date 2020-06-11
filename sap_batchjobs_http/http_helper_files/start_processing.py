@@ -21,7 +21,7 @@ except ModuleNotFoundError:
     from sap_batchjobs_http import azure_config
 
 
-def process_data(filename: str):
+def process_data(filename: str, path: str):
 
     config = azure_config.DefaultConfig()
     file_parameters = _parse_filename(filename)
@@ -29,7 +29,8 @@ def process_data(filename: str):
 
     source_blob = BlobHandler(config.PS_CONNECTION,
                               config.PS_RAW,
-                              filename)
+                              filename,
+                              path)
 
     destination_blob = BlobHandler(config.PS_CONNECTION,
                                    config.PS_INPROCESS,
