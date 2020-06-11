@@ -34,8 +34,8 @@ def process_data(filename: str, path: str):
 
     destination_blob = BlobHandler(config.PS_CONNECTION,
                                    config.PS_INPROCESS,
-                                   destination_blob_name,
-                                   '')
+                                   destination_blob_name
+                                   )
 
     # TODO: Write to log table with results.
     log_table = TableHandler(config.SS_CONNECTION,
