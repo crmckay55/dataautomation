@@ -25,7 +25,7 @@ def process_data(filename: str, path: str):
 
     config = azure_config.DefaultConfig()
     file_parameters = _parse_filename(filename)
-    destination_blob_name = _create_in_process_filename(file_parameters) + '.csv'
+    destination_blob_name = config.ip_SAPPath + _create_in_process_filename(file_parameters) + '.csv'
 
     source_blob = BlobHandler(config.PS_CONNECTION,
                               config.PS_RAW,
@@ -53,6 +53,11 @@ def process_data(filename: str, path: str):
         logging.info(f'Found module for {tx} with __app__')
 
     parsed_df = transaction_processor.parse_batch_file(source_contents, file_parameters['function'])
+
+    # Add columns for later use in partitioning in ADF
+    parsed_df['filename'] = file_parameters['event'] + '/' + \
+                            file_parameters['transaction'] + '/' + \
+                            file_parameters['date'] + '.csv'
 
     destination_blob.write_blob(parsed_df, 'csv')
     source_blob.delete_bob()
@@ -107,9 +112,11 @@ def _create_in_process_filename(parsed_filename: dict):
     :return: in_process_filename
     """
 
-    in_process_filename = parsed_filename['event'] + '-' \
-                         + parsed_filename['transaction'] + '_' + parsed_filename['version'] \
-                         + '-' + parsed_filename['date']
+    # TODO: figure out sink path name
+    in_process_filename = parsed_filename['transaction'] + '/' + \
+                          parsed_filename['event'] + '-' \
+                          + parsed_filename['transaction'] + '_' + parsed_filename['version'] \
+                          + '-' + parsed_filename['date']
 
     return in_process_filename
 

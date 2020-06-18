@@ -23,5 +23,7 @@ class DefaultConfig:
     SS_LOGSTABLE = os.getenv('SECONDARYSTORAGE_LOGSTABLE')
     SS_QUEUE = os.getenv('SECONDARYSTORAGE_QUEUE')
 
+    ip_SAPPath = 'SAPBatchReports/'
+
 
 
