@@ -22,6 +22,14 @@ except ModuleNotFoundError:
 
 
 def process_data(filename: str, path: str):
+    """First entry point after http call
+    This function calls everything needed to load, parse, and save
+    the in-process csv blob
+
+    :param filename: passed by http trigger
+    :param path:
+    :return:
+    """
 
     config = azure_config.DefaultConfig()
     file_parameters = _parse_filename(filename)
