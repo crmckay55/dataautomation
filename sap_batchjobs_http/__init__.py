@@ -26,6 +26,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     # get parameters from HTTP trigger
     name = req.params.get('filename')
     path = req.params.get('path')
+    factory_info = req.params.get('factoryinfo')
+    pipeline_run_id = req.params.get('pipelinerunid')
+    pipeline_start_time = req.params.get('starttime')
 
     if not name:
         try:
@@ -35,13 +38,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             name = req_body.get('filename')
             path = req_body.get('path')
+            factory_info = req_body.get('factoryinfo')
+            pipeline_run_id = req_body.get('pipelinerunid')
+            pipeline_start_time = req_body.get('starttime')
 
     # parse file
     if name:
         logging.info(f'Python HTTP trigger function processed a request with {name} and {path}.')
 
         # try and process file, and return the resuting message
-        response = {'results': start_processing.process_data(name, path)}
+        response = {'results': start_processing.process_data(name, path, factory_info, pipeline_run_id, pipeline_start_time)}
         
         func.HttpResponse.mimetype = 'application/json'
         func.HttpResponse.charset = 'utf-8'

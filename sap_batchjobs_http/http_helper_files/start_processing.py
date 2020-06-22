@@ -24,13 +24,14 @@ except ModuleNotFoundError: # if local
     from sap_batchjobs_http import azure_config
 
 
-def process_data(filename: str, path: str):
+def process_data(filename: str, path: str, factory_info: str, pipeline_run_id: str, pipeline_start_time: str):
     """First entry point after http call
     This function calls everything needed to load, parse, and save
     the in-process csv blob
 
     :param filename: passed in by http trigger
     :param path: passed in by http trigger
+    :param pipeline_run_id: id of the pipeline run from ADF
     :return: message with in process filename
     """
 
@@ -73,6 +74,9 @@ def process_data(filename: str, path: str):
                             file_parameters['transaction'] + '/' + \
                             file_parameters['date'] + '_' + \
                             file_parameters['step'] + '.csv'
+
+    # added pipeline run id for tracing
+    parsed_df['pipelinerunid'] = pipeline_run_id
 
     # write in process blob and delete raw blob
     destination_blob.write_blob(parsed_df, 'csv')

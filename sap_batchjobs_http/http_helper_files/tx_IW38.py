@@ -16,12 +16,11 @@ import pandas as pd
 
 def parse_batch_file(contents, function: str):
     """
-
     :param contents: blob data
     :param function: what version of the function to call
     :return: dataframe
     """
-    # TODO: dynamically call method based on version
+
     func = getattr(sys.modules[__name__], '_' + function.lower())
     df = func(contents)
 
