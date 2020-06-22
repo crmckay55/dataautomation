@@ -22,11 +22,11 @@ except ModuleNotFoundError:  # if local
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    
 
-    # TODO: standardize the body passed.  This will be done in data factory
+    # get parameters from HTTP trigger
     name = req.params.get('filename')
     path = req.params.get('path')
+
     if not name:
         try:
             req_body = req.get_json()
@@ -36,18 +36,12 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('filename')
             path = req_body.get('path')
 
+    # parse file
     if name:
         logging.info(f'Python HTTP trigger function processed a request with {name} and {path}.')
-        event, transaction, function, snap_date = start_processing.process_data(name, path)
 
-        filename = event + '-' + function + '-' + snap_date + '.csv'
-
-        response = {"inprogress_blob_name": filename,
-                    "event": event,
-                    "transaction": transaction,
-                    "function": function,
-                    "snapdate": snap_date
-                    }
+        # try and process file, and return the resuting message
+        response = {'results': start_processing.process_data(name, path)}
         
         func.HttpResponse.mimetype = 'application/json'
         func.HttpResponse.charset = 'utf-8'
