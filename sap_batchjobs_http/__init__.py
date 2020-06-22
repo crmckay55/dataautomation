@@ -56,7 +56,9 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
       
         return func.HttpResponse(body=json.dumps(response), status_code=200)
 
+    # TODO: enable returning with error
+
     else:
-        response = {"inprogress_blob_name": "error with" + status}
+        response = {"inprogress_blob_name": "error somewhere"}
         return func.HttpResponse(body=response,
                                  status_code=200)
