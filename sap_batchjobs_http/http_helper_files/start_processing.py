@@ -103,11 +103,13 @@ def _parse_filename(filename: str):
     preparse1 = filename.strip('Job SAP-')      # Step 1: remove prefix
     preparse2 = preparse1.split(',')[0]         # Step 2: remove suffix
 
-    step = preparse2[1].split('.')[0].lstrip()  # get the "Step x" to allow for multiple files per date and transaction
+    # get the "Step x" to allow for multiple files per date and transaction
+    # get right have of column split [1], and left halve at dot split [0], strip spaces from left.
+    step = preparse1.split(',')[1].split('.')[0].lstrip()
 
-    event = preparse2.split('-')[0]             # get event name
-    transaction = preparse2.split('-')[1].split('_')[0] # get transaction name
-    version = preparse2.split('-')[1].split('_')[1]     # get transaction version
+    event = preparse2.split('-')[0]             # get event name, left-most split of -
+    transaction = preparse2.split('-')[1].split('_')[0] # get transaction name, second index, left part of _ split
+    version = preparse2.split('-')[1].split('_')[1]     # get transaction version, second index, right part of _ split
 
     try:    # if there is index 2 (3 parameters) in preparse, then it's a manual upload with a snapshot date
         snap_date = preparse2.split('-')[2]
