@@ -34,7 +34,7 @@ def _zi73_01(contents) -> pd.DataFrame:
     :return: dataframe of parsed .htm contents
     """
 
-    zi73_start_table = 2  # TODO: for common tx's made one module with this as a config passed based on tx name
+    zi73_start_table = 3  # TODO: for common tx's made one module with this as a config passed based on tx name
 
     # parse contents with soup
     soup = BeautifulSoup(contents, "html.parser")
