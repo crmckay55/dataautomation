@@ -75,9 +75,6 @@ def process_data(filename: str, path: str, factory_info: str, pipeline_run_id: s
                             file_parameters['date'] + '_' + \
                             file_parameters['step'] + '.csv'
 
-    # added pipeline run id for tracing
-    parsed_df['pipelinerunid'] = pipeline_run_id
-
     # write in process blob and delete raw blob
     destination_blob.write_blob(parsed_df, 'csv')
     source_blob.delete_bob()
