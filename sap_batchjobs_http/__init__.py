@@ -18,7 +18,7 @@ try:     # if azure
     from .http_helper_files import start_processing
 except ModuleNotFoundError:  # if local
     from sap_batchjobs_http import azure_config
-    from sap_batchjobs_http import start_processing
+    from sap_batchjobs_http.http_helper_files import start_processing
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:

@@ -18,11 +18,9 @@ import pytz
 # import our own modules.
 try:    # if on azure
     from .manager_blobs import BlobHandler
-    from .manager_tables import TableHandler
-    from . import sap_batch
-except ModuleNotFoundError: # if local
+    from ..http_helper_files import sap_batch
+except ModuleNotFoundError:  # if local
     from sap_batchjobs_http.http_helper_files.manager_blobs import BlobHandler
-    from sap_batchjobs_http.http_helper_files.manager_tables import TableHandler
     from sap_batchjobs_http.http_helper_files import sap_batch
 
 

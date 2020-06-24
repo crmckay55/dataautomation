@@ -10,7 +10,6 @@ import logging
 import tempfile
 import pandas as pd
 from azure.storage.blob import BlobClient, BlobServiceClient
-import azure.core.exceptions as ae
 
 
 class BlobHandler:
