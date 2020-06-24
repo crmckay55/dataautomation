@@ -36,7 +36,7 @@ def start(source_container: str, path: str, sink_container: str):
 
     # for each file in files_to_process
     for file in files_to_process:
-        filename, sink_column, sink_path, sink_filename = _get_new_path_file(file)
+        filename, sink_column, sink_path, sink_filename = _get_new_path_file(file, path)
 
         # read into dataframe
         df = source_blob.read_blob_csv_to_df(filename)
@@ -50,7 +50,7 @@ def start(source_container: str, path: str, sink_container: str):
         source_blob.delete_blob_file(filename)
 
 
-def _get_new_path_file(file: str):
+def _get_new_path_file(file: str, path: str):
 
     extracted_filename = file['name']
     last_slash = extracted_filename.rfind('/')
@@ -62,15 +62,18 @@ def _get_new_path_file(file: str):
     last_underscore_index = parsed_filename.rfind('_')
     last_dash_index = parsed_filename.rfind('-')
 
+    # check if path has / at end
+    if path[-1] != '/':
+        path = path + '/'
+
     # get full filename and path for dataframe insertion
     filename_list = list(parsed_filename)
     filename_list[last_underscore_index] = '/'
     filename_list[last_dash_index] = '/'
-
-    # full sync name with folders for dataframe and ADF to use
     full_sink_filename = ''.join(filename_list)
 
-    sink_path_only = full_sink_filename[0:last_underscore_index]
+    # sink_path is only the transaction name
+    sink_path_only = path + full_sink_filename[last_dash_index + 1:last_underscore_index]
     sink_filename_only = full_sink_filename[last_underscore_index+1:]
 
     return filename, full_sink_filename, sink_path_only, sink_filename_only
