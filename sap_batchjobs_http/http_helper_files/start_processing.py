@@ -8,6 +8,8 @@
 # Changes:
 # ---------------------------------------------------------------
 
+# TODO update for new file format!!
+
 import importlib
 import logging
 import datetime
@@ -46,6 +48,7 @@ def process_data(filename: str, path: str, factory_info: str, pipeline_run_id: s
                               filename,
                               path)
 
+    # TODO catch error if blob exists.  delete??
     destination_blob = BlobHandler(config.PS_CONNECTION,
                                    config.PS_INPROCESS,
                                    destination_blob_name
