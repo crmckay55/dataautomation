@@ -38,10 +38,13 @@ def start(source_container: str, path: str, sink_container: str):
     for file in files_to_process:
         filename, sink_column, sink_path, sink_filename = _get_new_path_file(file)
 
+        # read into dataframe
         df = source_blob.read_blob_csv_to_df(filename)
 
+        # add filename column for ADF to use
         df['filename'] = sink_column
 
+        # write to destination blob and cleanup
         destination_blob.path = sink_path
         destination_blob.write_csv_to_blob(df, sink_filename)
         source_blob.delete_blob_file(filename)

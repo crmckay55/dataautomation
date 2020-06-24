@@ -62,13 +62,14 @@ class BlobHandler:
         """
         # TODO warp in try, return status
 
-        try:
+
+
+        try:  # will throw if file exists already
             blob_client = self._create_client(filename)
             output = df.to_csv(index=False, sep='\t')
             blob_client.upload_blob(output)
-            self.delete_blob_file(filename)
 
-        except Exception as e:
+        except Exception as e:  # delete blob then try again
             self.delete_blob_file(filename)
             output = df.to_csv(index=False, sep='\t')
             blob_client.upload_blob(output)
@@ -84,7 +85,7 @@ class BlobHandler:
 
         # TODO wrap in try, return status
         blob_client = self._create_client(filename)
-        blob_client.delete_blob(delete_snapshots=None)
+        blob_client.delete_blob(delete_snapshots=False)
         blob_client = None
 
     def get_blob_list(self):
@@ -112,13 +113,12 @@ class BlobHandler:
         :param filename: name of file to open
         :return: blob client object
         """
-
         # ensure last character on path is '/' to allow for filename appending
         if self.path[-1] != '/':
             self.path = self.path + '/'
 
         file_to_open = self.path + filename
-        print(file_to_open)
+
         return BlobClient.from_connection_string(conn_str=self._connection_string,
                                                  container_name=self._container,
                                                  blob_name=file_to_open)
