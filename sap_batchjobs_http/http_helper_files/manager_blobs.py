@@ -8,6 +8,7 @@
 import os
 import logging
 import tempfile
+import csv
 import pandas as pd
 from azure.storage.blob import BlobClient, BlobServiceClient
 
@@ -44,7 +45,7 @@ class BlobHandler:
         with open(temp_file, 'wb') as f:
             f.write(blob_client.download_blob().readall())
 
-        df = pd.read_csv(temp_file,  delimiter='\t', encoding='UTF-16', engine='python')
+        df = pd.read_csv(temp_file,  delimiter='\t', encoding='UTF-16', engine='python', quoting=csv.QUOTE_NONE)
 
         logging.info(f'Read file {filename} of size {len(df)}')
 

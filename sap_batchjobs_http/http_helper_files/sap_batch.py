@@ -38,6 +38,8 @@ def start(source_container: str, path: str, sink_container: str):
     for file in files_to_process:
         filename, sink_column, sink_path, sink_filename = _get_new_path_file(file, path)
 
+        print(filename)
+
         # read into dataframe
         df = source_blob.read_blob_csv_to_df(filename)
 
