@@ -24,7 +24,7 @@ except ModuleNotFoundError:  # if local
     from sap_batchjobs_http.http_helper_files import sap_batch
 
 
-def process_data(source_container: str, path: str,
+def process_data(source_container: str, source_path: str,
                  sink_container: str, datatype: str,
                  factory_info: str, pipeline_run_id: str, pipeline_start_time: str):
     """ First entry point after http call
@@ -32,7 +32,7 @@ def process_data(source_container: str, path: str,
     the in-process csv blob
 
     :param source_container:
-    :param path:
+    :param source_path:
     :param sink_container:
     :param datatype:
     :param factory_info:
@@ -41,7 +41,7 @@ def process_data(source_container: str, path: str,
     :return:
     """
 
-    sap_batch.start(source_container, path, sink_container)
+    sap_batch.start(source_container, source_path, sink_container)
 
     # TODO: Dynamically determine while handler to run based on data type
 

@@ -26,13 +26,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     # get parameters from HTTP trigger
     source_container = req.params.get('source_container')
     sink_container = req.params.get('sink_container')
-    path = req.params.get('source_path')
+    source_path = req.params.get('source_path')
     datatype = req.params.get('datatype')
     factory_info = req.params.get('factoryinfo')
     pipeline_run_id = req.params.get('pipelinerunid')
     pipeline_start_time = req.params.get('starttime')
 
-    if not path:
+    if not source_path:
         try:
             req_body = req.get_json()
         except ValueError:
@@ -40,18 +40,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         else:
             source_container = req_body.get('source_container')
             sink_container = req_body.get('sink_container')
-            path = req_body.get('source_path')
+            source_path = req_body.get('source_path')
             datatype = req_body.get('datatype')
             factory_info = req_body.get('factoryinfo')
             pipeline_run_id = req_body.get('pipelinerunid')
             pipeline_start_time = req_body.get('starttime')
 
 
-    if path:
-        logging.info(f'Python HTTP trigger function processed a request with {path} and {datatype}.')
+    if source_path:
+        logging.info(f'Python HTTP trigger function processed a request with {source_path} and {datatype}.')
 
         # try and process file, and return the resuting message
-        response = {'results': start_processing.process_data(source_container, path,
+        response = {'results': start_processing.process_data(source_container, source_path,
                                                              sink_container, datatype,
                                                              factory_info, pipeline_run_id, pipeline_start_time)}
         

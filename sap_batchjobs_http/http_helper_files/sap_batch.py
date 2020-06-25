@@ -18,66 +18,65 @@ except ModuleNotFoundError:  # if local
     from sap_batchjobs_http import azure_config
 
 
-def start(source_container: str, path: str, sink_container: str):
+def start(source_container: str, source_path: str, sink_container: str):
 
     config = azure_config.DefaultConfig()
 
     # Create source blob object
     source_blob = BlobHandler(config.PS_CONNECTION,
                               source_container,
-                              path)
+                              source_path)
 
     # Create sink blob object
     destination_blob = BlobHandler(config.PS_CONNECTION,
-                                   sink_container)
+                                   sink_container)      # path will change so don't pass a path
 
     # get files from source container and path
     files_to_process = source_blob.get_blob_list()
 
     # for each file in files_to_process
     for file in files_to_process:
-        filename, sink_column, sink_path, sink_filename = _get_new_path_file(file, path)
 
-        print(filename)
+        source_file, adf_path, in_progress_path, in_progress_file = _get_new_path_file(file, source_path)
 
         # read into dataframe
-        df = source_blob.read_blob_csv_to_df(filename)
+        df = source_blob.read_blob_csv_to_df(source_file)
 
         # add filename column for ADF to use
-        df['filename'] = sink_column
+        df['filename'] = adf_path
 
         # write to destination blob and cleanup
-        destination_blob.path = sink_path
-        destination_blob.write_csv_to_blob(df, sink_filename)
-        source_blob.delete_blob_file(filename)
+        destination_blob.path = in_progress_path
+        destination_blob.write_csv_to_blob(df, in_progress_file)
+        source_blob.delete_blob_file(source_file)
 
 
 def _get_new_path_file(file: str, path: str):
+    """parses the blob filename and path for use with manager_blobs class
 
-    extracted_filename = file['name']
-    last_slash = extracted_filename.rfind('/')
+    :param file: full path and file returned by blob list generator
+    :param path: path passed by ADF to use for source
+    :return: source_file, adf_path, in_progress_sink_path, in_progress_sink_file
+    """
 
-    # get bare filename 'yyyymmdd.csv'
-    filename = extracted_filename[last_slash+1:]
+    # template file: SAPBatchReports/PBI-Redwater TAR 2020-IW38_20200624.csv
+    # template path: SAPBatchReports/
+    extracted_filename = file['name']  # starting point full path in raw container
 
-    parsed_filename = filename.strip('PBI-')
-    last_underscore_index = parsed_filename.rfind('_')
-    last_dash_index = parsed_filename.rfind('-')
+    # parse to construct everything`
+    file_without_path = extracted_filename.split(path)[1]       # get new filename
+    file_no_flag = file_without_path.strip('PBI-')              # remove PBI flag
+    event_tx_only = file_no_flag.split('_')[0]                  # get event & tx for later processing
+    event_only = event_tx_only.split('-')[0]                    # left hand side with event name only
+    transaction_only = event_tx_only.split('-')[1]              # right hand side with transaction only
+    date_only = file_no_flag.split('_')[1].split('.')[0]        # date only
 
-    # check if path has / at end
-    if path[-1] != '/':
-        path = path + '/'
+    # create all return variables
+    adf_path = path + event_only + '/' + transaction_only + '/' + date_only + '.csv'
+    in_progress_sink_path = path + transaction_only + '/'
+    in_progress_sink_file = file_without_path
+    source_file = file_without_path
 
-    # get full filename and path for dataframe insertion
-    filename_list = list(parsed_filename)
-    filename_list[last_underscore_index] = '/'
-    filename_list[last_dash_index] = '/'
-    full_sink_filename = ''.join(filename_list)
-
-    # sink_path is only the transaction name
-    sink_path_only = path + full_sink_filename[last_dash_index + 1:last_underscore_index]
-    sink_filename_only = full_sink_filename[last_underscore_index+1:]
-
-    return filename, full_sink_filename, sink_path_only, sink_filename_only
+    return source_file, adf_path, in_progress_sink_path, in_progress_sink_file
 
 
