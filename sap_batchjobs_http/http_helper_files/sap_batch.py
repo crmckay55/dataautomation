@@ -65,7 +65,7 @@ def _get_new_path_file(file: str, path: str):
 
     # parse to construct everything`
     file_without_path = extracted_filename.split(path)[1]       # get new filename
-    file_no_flag = file_without_path.strip('PBI-')              # remove PBI flag
+    file_no_flag = file_without_path.split('PBI-')[1]              # remove PBI flag
     event_tx_only = file_no_flag.split('_')[0]                  # get event & tx for later processing
     event_only = event_tx_only.split('-')[0]                    # left hand side with event name only
     transaction_only = event_tx_only.split('-')[1]              # right hand side with transaction only
@@ -77,6 +77,7 @@ def _get_new_path_file(file: str, path: str):
     in_progress_sink_file = file_without_path
     source_file = file_without_path
 
+    print(adf_path)
     return source_file, adf_path, in_progress_sink_path, in_progress_sink_file
 
 
