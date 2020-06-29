@@ -41,8 +41,28 @@ def process_data(source_container: str, source_path: str,
     :return:
     """
 
-    sap_batch.start(source_container, source_path, sink_container)
+    if datatype == 'sap_batch':
+        try:
+            from ..http_helper_files import sap_batch
+        except ModuleNotFoundError:
+            from sap_batchjobs_http.http_helper_files import sap_batch
+
+        sap_batch.start(source_container, source_path, sink_container)
+
+        return 'SAP_Batch Done'
+
+    elif datatype == 'obiee_agent':
+        try:
+            from ..http_helper_files import obiee_agent
+        except ModuleNotFoundError:
+            from sap_batchjobs_http.http_helper_files import obiee_agent
+
+        obiee_agent.start(source_container, source_path, sink_container)
+
+        return 'OBIEE_Agent Done'
+
+        pass
 
     # TODO: Dynamically determine while handler to run based on data type
 
-    return 'Done'
+    return 'No Processor Found'
