@@ -44,6 +44,7 @@ def start(source_container: str, source_path: str, sink_container: str):
 
         # add filename column for ADF to use
         df['filename'] = adf_path
+        df.columns = df.columns.str.strip()
 
         # write to destination blob and cleanup
         destination_blob.path = in_progress_path
