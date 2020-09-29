@@ -58,7 +58,6 @@ def start(source_container: str, source_path: str, sink_container: str):
         col_names = list(range(1, col_count+1))
         df.columns = col_names
 
-
         # write to destination blob and cleanup
         destination_blob.path = in_progress_path
         destination_blob.write_csv_to_blob(df, in_progress_file)
