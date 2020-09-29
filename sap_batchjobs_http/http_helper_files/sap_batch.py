@@ -44,7 +44,14 @@ def start(source_container: str, source_path: str, sink_container: str):
 
         # add filename column for ADF to use
         df['filename'] = adf_path
-        df.columns = df.columns.str.strip()
+        df.columns = df.columns.str.strip() 
+
+        # change column names to generic so that there is consistency for azure data wrangling
+        # SAP will change column names from time to time, but we've mapped columns based on indes
+        # in data wrangling flow
+        col_count = len(df.columns)
+        col_names = list(range(1, col_count+1))
+        df.columns = col_names
 
         # write to destination blob and cleanup
         destination_blob.path = in_progress_path
