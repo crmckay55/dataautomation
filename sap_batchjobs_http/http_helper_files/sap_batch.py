@@ -10,7 +10,7 @@
 
 
 # import our own modules.
-try:    # if on azure
+try:  # if on azure
     from .manager_blobs import BlobHandler
     from .. import azure_config
 except ModuleNotFoundError:  # if local
@@ -19,7 +19,6 @@ except ModuleNotFoundError:  # if local
 
 
 def start(source_container: str, source_path: str, sink_container: str):
-
     config = azure_config.DefaultConfig()
 
     # Create source blob object
@@ -29,14 +28,13 @@ def start(source_container: str, source_path: str, sink_container: str):
 
     # Create sink blob object
     destination_blob = BlobHandler(config.PS_CONNECTION,
-                                   sink_container)      # path will change so don't pass a path
+                                   sink_container)  # path will change so don't pass a path
 
     # get files from source container and path
     files_to_process = source_blob.get_blob_list()
 
     # for each file in files_to_process
     for file in files_to_process:
-
         source_file, adf_path, in_progress_path, in_progress_file = _get_new_path_file(file, source_path)
 
         # read into dataframe
@@ -45,6 +43,16 @@ def start(source_container: str, source_path: str, sink_container: str):
         # add filename column for ADF to use
         df['filename'] = adf_path
         df.columns = df.columns.str.strip()
+
+        # change column names to generic so that there is consistency for azure data wrangling
+        # SAP will change column names from time to time, but we've mapped columns based on indes
+        # in data wrangling flow
+        col_count = len(df.columns)
+        print(col_count)
+        col_names = list(range(1, col_count+1))
+        print(col_names)
+        df.columns = col_names
+
 
         # write to destination blob and cleanup
         destination_blob.path = in_progress_path
@@ -65,12 +73,12 @@ def _get_new_path_file(file: str, path: str):
     extracted_filename = file['name']  # starting point full path in raw container
 
     # parse to construct everything`
-    file_without_path = extracted_filename.split(path)[1]       # get new filename
-    file_no_flag = file_without_path.split('PBI-')[1]              # remove PBI flag
-    event_tx_only = file_no_flag.split('_')[0]                  # get event & tx for later processing
-    event_only = event_tx_only.split('-')[0]                    # left hand side with event name only
-    transaction_only = event_tx_only.split('-')[1]              # right hand side with transaction only
-    date_only = file_no_flag.split('_')[1].split('.')[0]        # date only
+    file_without_path = extracted_filename.split(path)[1]  # get new filename
+    file_no_flag = file_without_path.split('PBI-')[1]  # remove PBI flag
+    event_tx_only = file_no_flag.split('_')[0]  # get event & tx for later processing
+    event_only = event_tx_only.split('-')[0]  # left hand side with event name only
+    transaction_only = event_tx_only.split('-')[1]  # right hand side with transaction only
+    date_only = file_no_flag.split('_')[1].split('.')[0]  # date only
 
     # create all return variables
     adf_path = path + event_only + '/' + transaction_only + '/' + date_only + '.csv'
@@ -80,5 +88,3 @@ def _get_new_path_file(file: str, path: str):
 
     print(adf_path)
     return source_file, adf_path, in_progress_sink_path, in_progress_sink_file
-
-
