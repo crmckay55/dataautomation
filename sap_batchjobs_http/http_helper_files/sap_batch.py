@@ -48,9 +48,7 @@ def start(source_container: str, source_path: str, sink_container: str):
         # SAP will change column names from time to time, but we've mapped columns based on indes
         # in data wrangling flow
         col_count = len(df.columns)
-        print(col_count)
         col_names = list(range(1, col_count+1))
-        print(col_names)
         df.columns = col_names
 
 
